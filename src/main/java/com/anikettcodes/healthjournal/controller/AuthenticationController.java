@@ -2,6 +2,8 @@ package com.anikettcodes.healthjournal.controller;
 
 import com.anikettcodes.healthjournal.dto.LoginRequest;
 import com.anikettcodes.healthjournal.dto.AuthResponse;
+import com.anikettcodes.healthjournal.dto.RegisterUserRequest;
+import com.anikettcodes.healthjournal.service.AuthService;
 import com.anikettcodes.healthjournal.service.JwtService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -15,16 +17,17 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/auth")
 public class AuthenticationController {
 
-    private final JwtService jwtService;
+    private final AuthService authService;
 
     @PostMapping("/login")
     public ResponseEntity<AuthResponse> loginUser(@RequestBody LoginRequest loginRequest){
-        return ResponseEntity.ok(jwtService.login(loginRequest));
+        return ResponseEntity.ok(authService.login(loginRequest));
     }
 
-//    @PostMapping("/register")
-//    public ResponseEntity<AuthResponse> registerUser(@RequestBody RegisterRequest)
-
+    @PostMapping("/register")
+    public ResponseEntity<AuthResponse> registerUser(@RequestBody RegisterUserRequest registerRequest) {
+        return ResponseEntity.ok(authService.registerUser(registerRequest));
+    }
 
 
 }

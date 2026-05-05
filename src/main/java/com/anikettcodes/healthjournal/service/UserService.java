@@ -61,4 +61,15 @@ public class UserService implements UserDetailsService {
     public User loadUser(@NonNull String username) throws UsernameNotFoundException {
         return userRepository.findByEmail(username).orElseThrow(()-> new UsernameNotFoundException("User does not exists"));
     }
+
+    public boolean checkUserExistsByEmail(String email){
+        return userRepository.existsByEmail(email);
+    }
+
+    public User saveUser(@NonNull User user){
+        return userRepository.save(user);
+    }
+
+
+
 }

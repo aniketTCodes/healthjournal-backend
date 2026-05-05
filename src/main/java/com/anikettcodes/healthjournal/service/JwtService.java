@@ -1,21 +1,13 @@
 package com.anikettcodes.healthjournal.service;
 
-import com.anikettcodes.healthjournal.domain.User;
-import com.anikettcodes.healthjournal.dto.AuthResponse;
-import com.anikettcodes.healthjournal.dto.LoginRequest;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
-import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
 
 import javax.crypto.SecretKey;
@@ -26,8 +18,6 @@ import java.util.function.Function;
 @RequiredArgsConstructor
 public class JwtService {
 
-    private final AuthenticationConfiguration authenticationConfiguration;
-    private final UserService userService;
 
     // Store this in application.properties, not hardcoded
     @Value("${jwt.secret}")
@@ -35,6 +25,7 @@ public class JwtService {
 
     @Value("${jwt.expiration-ms:86400000}") // 24h default
     private long expirationMs;
+
 
 
 
@@ -89,27 +80,4 @@ public class JwtService {
         return claimsResolver.apply(claims);
     }
 
-    public AuthResponse login(LoginRequest request){
-        AuthenticationManager authManager = authenticationConfiguration.getAuthenticationManager();
-        authManager.authenticate(
-                new UsernamePasswordAuthenticationToken(
-                        request.getUsername(),
-                        request.getPassword()
-                )
-        );
-
-        User user = userService.loadUser(request.getUsername());
-        String accessToken = generateToken(request.getUsername(), user.getId());
-        String refreshToken = generateRefreshToken(request.getUsername(),user.getId());
-        AuthResponse authResponse = new AuthResponse(
-                accessToken,
-                refreshToken,
-                expirationMs,
-                "Bearer",
-                user.getEmail()
-        );
-
-        return authResponse;
-
-    }
 }

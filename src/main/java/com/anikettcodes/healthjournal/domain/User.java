@@ -1,6 +1,7 @@
 package com.anikettcodes.healthjournal.domain;
 
 import com.anikettcodes.healthjournal.util.ActivityLevel;
+import com.anikettcodes.healthjournal.util.FitnessGoal;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -43,4 +44,7 @@ public class User {
 
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
+
+    @Column(name = "goal")
+    private FitnessGoal goal;
 }
