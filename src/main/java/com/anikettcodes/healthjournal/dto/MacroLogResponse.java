@@ -5,12 +5,16 @@ import com.anikettcodes.healthjournal.util.MealType;
 import com.anikettcodes.healthjournal.util.SourceType;
 import lombok.Builder;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Data
 @Builder
+@Getter
+@Setter
 public class MacroLogResponse {
 
     private Long id;
@@ -42,4 +46,6 @@ public class MacroLogResponse {
                 .updatedAt(log.getUpdatedAt())
                 .build();
     }
+
+
 }

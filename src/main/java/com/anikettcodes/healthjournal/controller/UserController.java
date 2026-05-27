@@ -9,6 +9,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 // import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -24,17 +25,17 @@ public class UserController {
     // GET /me/profile
     @GetMapping("/profile")
     public ResponseEntity<UserProfileResponse> getProfile(
-            // @AuthenticationPrincipal AppUserPrincipal principal
+           Authentication authentication
     ) {
-        return ResponseEntity.ok(userService.getProfile(HARDCODED_USER_ID));
+        return ResponseEntity.ok(userService.getProfile(Long.parseLong(authentication.getPrincipal().toString())));
     }
 
     // PATCH /me/profile
     @PatchMapping("/profile")
     public ResponseEntity<UserProfileResponse> patchProfile(
-            // @AuthenticationPrincipal AppUserPrincipal principal,
+            Authentication authentication,
             @Valid @RequestBody UserProfilePatchRequest request
     ) {
-        return ResponseEntity.ok(userService.patchProfile(HARDCODED_USER_ID, request));
+        return ResponseEntity.ok(userService.patchProfile(Long.parseLong(authentication.getPrincipal().toString()), request));
     }
 }

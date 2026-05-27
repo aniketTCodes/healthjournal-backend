@@ -2,6 +2,8 @@ package com.anikettcodes.healthjournal.dto;
 
 import com.anikettcodes.healthjournal.util.ActivityLevel;
 import com.anikettcodes.healthjournal.util.FitnessGoal;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import lombok.*;
@@ -33,6 +35,14 @@ public class RegisterUserRequest {
     private Double heightCm;
 
     private ActivityLevel activityLevel;
+
+    @Enumerated(value = EnumType.STRING)
     private FitnessGoal goal;
+
+    private Double startingWeight;
+
+    @Positive
+    @NotNull
+    private Double initialWeight;
 
 }

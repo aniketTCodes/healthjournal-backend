@@ -37,6 +37,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         String jwt = null;
         String username = null;
+        Long id = null;
 
         // 🔹 Step 2: Check if header contains Bearer token
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
@@ -44,10 +45,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
             // 🔹 Step 3: Extract username from token
             username = jwtService.extractUsername(jwt);
+            id = jwtService.extractUserId(jwt);
         }
 
         // 🔹 Step 4: If username exists and user is not already authenticated
-        if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+        if (id != null && SecurityContextHolder.getContext().getAuthentication() == null) {
 
             // 🔹 Step 5: Load user details from DB (or in-memory)
             UserDetails userDetails = userDetailsService.loadUserByUsername(username);
@@ -58,7 +60,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 // 🔹 Step 7: Create authentication object
                 UsernamePasswordAuthenticationToken authToken =
                         new UsernamePasswordAuthenticationToken(
-                                userDetails,      // principal (user)
+                                id,      // principal (user)
                                 null,             // credentials (null because already verified)
                                 userDetails.getAuthorities() // roles
                         );

@@ -5,6 +5,7 @@ import com.anikettcodes.healthjournal.dto.WeightLogRequest;
 import com.anikettcodes.healthjournal.dto.WeightLogResponse;
 // TODO: uncomment when security is implemented
 // import com.anikettcodes.healthjournal.security.AppUserPrincipal;
+import com.anikettcodes.healthjournal.security.AppUserPrinciple;
 import com.anikettcodes.healthjournal.service.WeightLogService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -12,10 +13,14 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 // import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 
 @RestController
 @RequiredArgsConstructor
@@ -23,46 +28,44 @@ public class WeightLogController {
 
     private final WeightLogService weightLogService;
 
-    // TODO: replace hardcoded ID with @AuthenticationPrincipal AppUserPrincipal principal
-    private static final Long HARDCODED_USER_ID = 1L;
 
     // POST /me/weight-logs
     @PostMapping("/me/weight-logs")
     public ResponseEntity<WeightLogResponse> create(
-            // @AuthenticationPrincipal AppUserPrincipal principal,
+            Authentication authentication,
             @Valid @RequestBody WeightLogRequest request
     ) {
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(weightLogService.create(HARDCODED_USER_ID, request));
+                .body(weightLogService.create(Long.parseLong(authentication.getPrincipal().toString()), request));
     }
 
     // GET /me/weight-logs?from=&to=
     @GetMapping("/me/weight-logs")
     public ResponseEntity<List<WeightLogResponse>> findAll(
-            // @AuthenticationPrincipal AppUserPrincipal principal,
-            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime from,
-            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime to
+            Authentication authentication,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate from,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate to
     ) {
-        return ResponseEntity.ok(weightLogService.findAll(HARDCODED_USER_ID, from, to));
+        return ResponseEntity.ok(weightLogService.findAll(Long.parseLong(authentication.getPrincipal().toString()), from, to));
     }
 
     // PATCH /weight-logs/{id}
     @PatchMapping("/weight-logs/{id}")
     public ResponseEntity<WeightLogResponse> patch(
-            // @AuthenticationPrincipal AppUserPrincipal principal,
+            Authentication authentication,
             @PathVariable Long id,
             @Valid @RequestBody WeightLogPatchRequest request
     ) {
-        return ResponseEntity.ok(weightLogService.patch(HARDCODED_USER_ID, id, request));
+        return ResponseEntity.ok(weightLogService.patch(Long.parseLong(authentication.getPrincipal().toString()), id, request));
     }
 
     // DELETE /weight-logs/{id}
     @DeleteMapping("/weight-logs/{id}")
     public ResponseEntity<Void> delete(
-            // @AuthenticationPrincipal AppUserPrincipal principal,
+            Authentication authentication,
             @PathVariable Long id
     ) {
-        weightLogService.delete(HARDCODED_USER_ID, id);
+        weightLogService.delete(Long.parseLong(authentication.getPrincipal().toString()), id);
         return ResponseEntity.noContent().build();
     }
 }

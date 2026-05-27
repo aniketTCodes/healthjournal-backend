@@ -2,6 +2,7 @@ package com.anikettcodes.healthjournal.service;
 
 import com.anikettcodes.healthjournal.domain.MacroLog;
 import com.anikettcodes.healthjournal.domain.User;
+import com.anikettcodes.healthjournal.dto.DailySummaryResponse;
 import com.anikettcodes.healthjournal.dto.MacroLogPatchRequest;
 import com.anikettcodes.healthjournal.dto.MacroLogRequest;
 import com.anikettcodes.healthjournal.dto.MacroLogResponse;
@@ -47,12 +48,23 @@ public class MacroLogService {
     }
 
     @Transactional(readOnly = true)
-    public List<MacroLogResponse> findAll(Long userId, LocalDate from, LocalDate to) {
+    public List<MacroLogResponse> findAll(Long userId, LocalDate date) {
         return macroLogRepository
-                .findByUserIdAndDateBetweenOrderByDateDescCreatedAtDesc(userId, from, to)
+                .findByUserIdAndDateOrderByDateDesc(userId, date)
                 .stream()
                 .map(MacroLogResponse::from)
                 .toList();
+    }
+
+    @Transactional(readOnly = true)
+    public DailySummaryResponse getDailySummary(Long userId, LocalDate date) {
+        List<MacroLogResponse> entries = macroLogRepository
+                .findByUserIdAndDateOrderByCreatedAtDesc(userId, date)
+                .stream()
+                .map(MacroLogResponse::from)
+                .toList();
+
+        return DailySummaryResponse.of(date, entries);
     }
 
     @Transactional

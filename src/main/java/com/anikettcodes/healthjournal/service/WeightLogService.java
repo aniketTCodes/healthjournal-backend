@@ -12,8 +12,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -27,6 +29,14 @@ public class WeightLogService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new EntityNotFoundException("User not found: " + userId));
 
+        Optional<WeightLog> existingLog = findByUserIdAndLoggedAt(userId, request.getLoggedAt());
+
+        if(existingLog.isPresent()) {
+           WeightLog log = existingLog.get();
+           log.setWeight(request.getWeight());
+           return WeightLogResponse.from(weightLogRepository.save(log));
+        }
+
         WeightLog log = WeightLog.builder()
                 .user(user)
                 .weight(request.getWeight())
@@ -38,7 +48,7 @@ public class WeightLogService {
     }
 
     @Transactional(readOnly = true)
-    public List<WeightLogResponse> findAll(Long userId, LocalDateTime from, LocalDateTime to) {
+    public List<WeightLogResponse> findAll(Long userId, LocalDate from, LocalDate to) {
         return weightLogRepository
                 .findByUserIdAndLoggedAtBetweenOrderByLoggedAtDesc(userId, from, to)
                 .stream()
@@ -72,5 +82,10 @@ public class WeightLogService {
         }
 
         weightLogRepository.delete(log);
+    }
+
+    @Transactional
+    private Optional<WeightLog> findByUserIdAndLoggedAt(Long userId, LocalDate loggedAt) {
+        return weightLogRepository.findByUserIdAndLoggedAt(userId, loggedAt);
     }
 }

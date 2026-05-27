@@ -38,6 +38,7 @@ public class JwtService {
         return Jwts.builder()
                 .setSubject(String.valueOf(userId))
                 .claim("email",email)
+                .claim("type","access")
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + expirationMs))
                 .signWith(getSigningKey(), SignatureAlgorithm.HS256)
@@ -48,6 +49,7 @@ public class JwtService {
         return Jwts.builder()
                 .setSubject(String.valueOf(id))
                 .claim("email", email)
+                .claim("type","refresh")
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + expirationMs * 7))
                 .signWith(getSigningKey(), SignatureAlgorithm.HS256)
@@ -64,7 +66,7 @@ public class JwtService {
 
     public boolean isTokenValid(String token, UserDetails userDetails) {
         final String username = extractUsername(token);
-        return username.equals(userDetails.getUsername()) && !isTokenExpired(token);
+        return "access".equals(extractClaim(token,claims -> claims.get("type", String.class)))&&username.equals(userDetails.getUsername()) && !isTokenExpired(token);
     }
 
     private boolean isTokenExpired(String token) {
@@ -78,6 +80,11 @@ public class JwtService {
                 .parseClaimsJws(token)
                 .getBody();
         return claimsResolver.apply(claims);
+    }
+
+    public boolean isRefreshToken(String token) {
+        String type = extractClaim(token, claims -> claims.get("type", String.class));
+        return "refresh".equals(type);
     }
 
 }

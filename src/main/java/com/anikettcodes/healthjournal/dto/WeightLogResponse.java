@@ -4,6 +4,7 @@ import com.anikettcodes.healthjournal.domain.WeightLog;
 import lombok.Builder;
 import lombok.Data;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Data
@@ -12,7 +13,7 @@ public class WeightLogResponse {
 
     private Long id;
     private Double weight;
-    private LocalDateTime loggedAt;
+    private LocalDate loggedAt;
     private LocalDateTime createdAt;
 
     public static WeightLogResponse from(WeightLog log) {

@@ -46,5 +46,7 @@ public class User {
     private LocalDateTime updatedAt;
 
     @Column(name = "goal")
+    @Enumerated(EnumType.STRING)
     private FitnessGoal goal;
+
 }
