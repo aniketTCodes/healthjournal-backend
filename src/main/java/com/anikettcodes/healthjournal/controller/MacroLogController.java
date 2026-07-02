@@ -1,9 +1,8 @@
 package com.anikettcodes.healthjournal.controller;
 
-import com.anikettcodes.healthjournal.dto.DailySummaryResponse;
-import com.anikettcodes.healthjournal.dto.MacroLogPatchRequest;
-import com.anikettcodes.healthjournal.dto.MacroLogRequest;
-import com.anikettcodes.healthjournal.dto.MacroLogResponse;
+import com.anikettcodes.healthjournal.dto.LlmFormatDto;
+import com.anikettcodes.healthjournal.dto.*;
+import com.anikettcodes.healthjournal.service.AiMacroLogService;
 import com.anikettcodes.healthjournal.service.MacroLogService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -21,6 +20,15 @@ import java.util.List;
 public class MacroLogController {
 
     private final MacroLogService macroLogService;
+    private final AiMacroLogService aiMacroLogService;
+
+    @PostMapping("/me/food-entries/ai")
+    public LLMResponseDto createAiFoodEntry(
+            Authentication authentication,
+            @RequestBody String prompt
+    ) {
+        return aiMacroLogService.getMacroLog(prompt,userId(authentication));
+    }
 
     // POST /me/food-entries
     @PostMapping("/me/food-entries")

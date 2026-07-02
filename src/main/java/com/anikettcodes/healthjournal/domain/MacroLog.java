@@ -25,6 +25,10 @@ public class MacroLog {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "llm_log_id", nullable = true)
+    private LlmMacroLog llmMacroLog;
+
     @Column(nullable = false)
     private LocalDate date;
 

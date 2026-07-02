@@ -18,4 +18,9 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid token!");
     }
 
+    @ExceptionHandler(LLMFormatException.class)
+    public ResponseEntity<String> llmResponseFormatException(LLMFormatException ex){
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ex.getMessage());
+    }
+
 }
